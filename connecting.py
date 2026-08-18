@@ -1,5 +1,6 @@
 import os
 from openai import OpenAI
+from openai.types.chat import ChatCompletionUserMessageParam, ChatCompletionSystemMessageParam
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,17 +28,25 @@ client = OpenAI(
     base_url=base_url
 )
 
-def ask_chatgpt(user_message):
-    response = client.responses.create(
+def ask_chatgpt(message):
+    system_message: ChatCompletionSystemMessageParam = {
+        "role": "system",
+        "content": "You are a helpful assistant."
+    }
+
+    user_message: ChatCompletionUserMessageParam = {
+        "role": "user",
+        "content": message
+    }
+
+    response = client.chat.completions.create(
         model=model,
-        instructions="You are a helpful assistant.",
-        input=user_message
+        messages=[system_message, user_message],
+        temperature=0.7
     )
 
-    print(response.usage)
-
-    return response.output_text
+    return response.choices[0].message.content
 
 user = "What is the capital of France?"
-response = ask_chatgpt(user)
-print(response)
+chat_response = ask_chatgpt(user)
+print(chat_response)
