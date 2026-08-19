@@ -11,8 +11,8 @@ load_dotenv()
 api_key = os.getenv('LM_STUDIO_API_KEY')
 base_url = "http://localhost:1234/v1"
 
-# model = "google/gemma-4-e4b"
-model = "mistralai/mistral-7b-instruct-v0.3"
+model = "google/gemma-4-e4b"
+# model = "mistralai/mistral-7b-instruct-v0.3"
 
 client = OpenAI(
     api_key=api_key,
