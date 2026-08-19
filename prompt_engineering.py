@@ -11,7 +11,8 @@ load_dotenv()
 api_key = os.getenv('LM_STUDIO_API_KEY')
 base_url = "http://localhost:1234/v1"
 
-model = "google/gemma-4-e4b"
+# model = "google/gemma-4-e4b"
+model = "mistralai/mistral-7b-instruct-v0.3"
 
 client = OpenAI(
     api_key=api_key,
@@ -35,14 +36,9 @@ def load_and_parse_json_file(file_path):
 
 
 def prompt_llm(messages):
-    user_message: ChatCompletionUserMessageParam = {
-        "role": "user",
-        "content": messages
-    }
-
     response = client.chat.completions.create(
         model=model,
-        messages=[user_message]
+        messages=messages
     )
 
     return response.choices[0].message.content
