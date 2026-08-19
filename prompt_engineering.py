@@ -24,14 +24,17 @@ def list_text_files_in_directory(directory):
     return [
         filename
         for filename in os.listdir(directory)
-        if filename.endswith(".json")
+        if filename.endswith(".jsonl")
     ]
 
 
-def load_and_parse_json_file(file_path):
+def load_and_parse_jsonl_file(file_path):
     with open(file_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
-
+        data = [
+            json.loads(line)
+            for line in file
+            if line.strip()
+        ]
     return data
 
 
@@ -67,17 +70,17 @@ def main():
             elif 1 <= choice <= len(text_files):
                 selected_file = text_files[choice - 1]
                 file_path = os.path.join(directory, selected_file)
-                messages = load_and_parse_json_file(file_path)
+                prompt_groups = load_and_parse_jsonl_file(file_path)
+                for i, messages in enumerate(prompt_groups, start=1):
+                    print(f"\nPROMPT {i} ====================")
 
-                print(f"Running prompts for {selected_file}")
+                    for j, message in enumerate(messages, start=1):
+                        print(f"MESSAGE {j} --------------------")
+                        print(f"Role: {message['role']}")
+                        print(f"Content: {message['content']}")
 
-                for i, message in enumerate(messages, start=1):
-                    print(f"MESSAGE {i} --------------------")
-                    print(f"Role: {message['role']}")
-                    print(f"Content: {message['content']}")
-
-                print("REPLY ---------------------------")
-                print(prompt_llm(messages))
+                    print("REPLY ---------------------------")
+                    print(prompt_llm(messages))
             else:
                 print("Invalid choice. Please enter a valid number.")
         except ValueError:
